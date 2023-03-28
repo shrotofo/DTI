@@ -142,4 +142,24 @@ void juggle() {
   }
 }
 
+#code for LED TO LIGHT UP 
+
+int sensor=2;
+int val=0;
+int ledPin=12;
+
+void setup(){
+pinMode(sensor,INPUT);
+pinMode(ledPin,OUTPUT);
+}
+
+void loop(){
+val=digitalRead(sensor);
+if(val){
+digitalWrite(ledPin,HIGH);
+else
+digitalWrite(ledPin,LOW);
+}
+
+
 
