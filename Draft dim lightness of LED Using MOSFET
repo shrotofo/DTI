@@ -1,0 +1,11 @@
+const int buttonPin = 2; // the number of the switch pin
+ const int ledPin = 9; // the number of the LED pin // variables will change:
+ int buttonState = 0; // variable for reading the switch status int brightness = 0; 
+int fadeAmount = 5; 
+void setup() { // initialize the LED pin as an output: pinMode(ledPin, OUTPUT); // initialize the pushbutton pin as an input: pinMode(buttonPin, INPUT); } 
+void loop(){ // read the state of the switch value:
+ buttonState = digitalRead(buttonPin); // check if the switch is ON. // if it is, the buttonState is LOW: 
+if (buttonState == LOW) { // fade LED on: analogWrite(ledPin, brightness); 
+if (brightness < 255) { brightness = brightness + fadeAmount; } }
+ else { // fade LED off: analogWrite(ledPin, brightness); 
+if (brightness > 0) { brightness = brightness - fadeAmount; } } delay(30); }
