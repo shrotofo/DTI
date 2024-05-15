@@ -1,0 +1,102 @@
+#include <Adafruit_NeoPixel.h>
+
+// C++ code
+//
+
+#define PIN 9
+#define NUM_LEDS 60
+
+
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
+void setup()
+{
+  strip.begin();
+  Serial.begin(9600);
+  strip.show(); // Initialize all pixels to 'off'
+}
+
+
+void loop() {
+  rainbow();
+}
+
+void Strobe(byte red, byte green, byte blue, int StrobeCount, int FlashDelay, int EndPause){
+  //Serial.println("Strobe");
+  for(int j = 0; j < StrobeCount; j++) {
+    FadeInOut(red,green,blue);
+    //Serial.println("Strobe-----Ended");
+  }
+ //Serial.println("StrobeEnded");
+ delay(EndPause);
+}
+
+void FadeInOut(byte red, byte green, byte blue){
+  float r, g, b;
+     
+  for(int k = 0; k < 256; k+=20) {
+    r = (k/256.0)*red;
+    g = (k/256.0)*green;
+    b = (k/256.0)*blue;
+    setAll(r,g,b);
+    showStrip();
+    //Serial.println(k);
+  }
+  delay(50);
+  //Serial.println("Reverse");
+  for(int k = 255; k > 2; k-=20) {
+    r = (k/256.0)*red;
+    g = (k/256.0)*green;
+    b = (k/256.0)*blue;
+    setAll(r,g,b);
+    showStrip();
+  }
+  //Serial.println("end");
+}
+void showStrip() {
+ #ifdef ADAFRUIT_NEOPIXEL_H
+   // NeoPixel
+   strip.show();
+ #endif
+ #ifndef ADAFRUIT_NEOPIXEL_H
+   // FastLED
+   FastLED.show();
+ #endif
+}
+
+void setPixel(int Pixel, byte red, byte green, byte blue) {
+ #ifdef ADAFRUIT_NEOPIXEL_H
+   // NeoPixel
+   strip.setPixelColor(Pixel, strip.Color(red, green, blue));
+ #endif
+ #ifndef ADAFRUIT_NEOPIXEL_H
+   // FastLED
+   leds[Pixel].r = red;
+   leds[Pixel].g = green;
+   leds[Pixel].b = blue;
+ #endif
+}
+
+void setAll(byte red, byte green, byte blue) {
+  for(int i = 0; i < NUM_LEDS; i++ ) {
+    setPixel(i, red, green, blue);
+  }
+  showStrip();
+}
+
+
+void rainbow() {
+  for(long firstPixelHue = 0; firstPixelHue < 5*65536; firstPixelHue += 512) {
+    int pixelHue = firstPixelHue + (255 * 65536L / strip.numPixels());
+    //Serial.println("------------------");
+    //Serial.println(pixelHue);  
+    uint32_t Color = strip.gamma32(strip.ColorHSV(pixelHue));
+    //Serial.println(Color);
+    uint8_t r = Color >> 16;
+    uint8_t g = Color >> 8;
+    uint8_t b = Color;
+/*    Serial.println(r);
+    Serial.println(g);
+    Serial.println(b);*/
+    Strobe(r, g, b, 1, 50, 100);
+  }
+}
